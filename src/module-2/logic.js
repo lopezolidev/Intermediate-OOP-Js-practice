@@ -6,6 +6,9 @@ const obj1 = {
     c: {
         d: 'd',
         e: 'e',
+    },
+    editA() {
+        this.a = "AAAAAAA";
     }
 }
 
@@ -103,3 +106,43 @@ const parsedStringifiedCompObj = JSON.parse(stringifiedComplexObject);
 // c: {d: 'd', e: 'e'}
 
 //this two JSON methods don't recognize methods inside objects, therefore you can lose types of data, isn't efficient, Date is parsed as string and not as Date and turn some unsuported data types in suported like infinity and NaN in null, etc 
+
+// Testing Recursion //
+
+function isObject(subject) {
+    return typeof subject == 'object';
+}
+function isArray(subject) {
+    return Array.isArray(subject);
+}
+
+function deepCopy(subject){
+    let copySubject;
+
+    const subjectIsObject = isObject(subject);
+    const subjectIsArray = isArray(subject);
+
+    if (subjectIsObject){
+        copySubject = {};
+    } else if (subjectIsArray){
+        copySubject = [];
+    } else {
+        return subject;
+    }
+
+    for (key in subject){
+        const keyIsObject = isObject(subject[key]);
+
+        if (keyIsObject){
+            copySubject[key] = deepCopy(subject[key]);
+        } else {
+            if (subjectIsArray) {
+                copySubject.push(subject[key])
+            } else {
+                copySubject[key] = subject[key];
+            }
+        }
+    }
+
+    return copySubject;
+}
