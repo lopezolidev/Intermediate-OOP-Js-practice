@@ -2,7 +2,15 @@ function isObject(subject) {
     return typeof subject == 'object';
 }
 function isArray(subject) {
-    return Array.isArray(subject);
+    if (Array.isArray(subject)){
+        if(subject instanceof Array){
+            return true;
+        }
+    }
+    else {
+        return false;
+    }
+    // return Array.isArray(subject);
 }
 
 function deepCopy(subject){
@@ -280,3 +288,68 @@ const chalo = new Student({
 // name: "Rosauro"
 // socialMedia: {twitter: undefined, instagram: undefined, facebook: undefined}
 // [[Prototype]]: Object
+
+// Creating static methods (methods only accessible through our prototype itself)
+
+function SuperObject(){};
+SuperObject.deepCopy = function(subject){
+    let copySubject;
+
+    const subjectIsObject = isObject(subject);
+    const subjectIsArray = isArray(subject);
+
+    if (subjectIsObject){
+        copySubject = {};
+    } else if (subjectIsArray){
+        copySubject = [];
+    } else {
+        return subject;
+    }
+
+    for (key in subject){
+        const keyIsObject = isObject(subject[key]);
+
+        if (keyIsObject){
+            copySubject[key] = deepCopy(subject[key]);
+        } else {
+            if (subjectIsArray) {
+                copySubject.push(subject[key])
+            } else {
+                copySubject[key] = subject[key];
+            }
+        }
+    }
+
+    return copySubject;
+}
+SuperObject.isArray = function(subject) {
+    if (Array.isArray(subject)){
+        if(subject instanceof Array){
+            return true;
+        }
+    }
+    else {
+        return false;
+    }
+}
+
+//this syntax is the same as using "static" word inside a class
+
+const juan = new SuperObject(); //initializing "juan" as an object from SuperObject prototype
+
+console.log(SuperObject.isArray("17"));
+//false
+
+console.log(SuperObject.deepCopy({
+    a: "a",
+    private b: "b",
+    c: {
+        d: "e",
+        e:"e",
+    }
+}))
+// {a: 'a', b: 'b', c: {…}}
+// a: "a"
+// b: "b"
+// c: {d: 'e', e: 'e'}
+
